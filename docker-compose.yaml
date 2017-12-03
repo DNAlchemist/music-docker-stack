@@ -1,9 +1,25 @@
-version: '2'
+version: '3'
 services:
   musicplaylistmicroservice:
     image: chest/music-playlist-microservice
     ports:
       - "5050:5050"
+    environment:
+      - LOGSTASH_DESTINATION=logstash:5555
+    depends_on:
+      - logstash
+  musicsearchmicroservice:
+    image: chest/music-search-microservice
+    environment:
+      - LOGSTASH_DESTINATION=logstash:5555
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - 80:80
+    links:
+      - musicsearchmicroservice
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   elasticsearch:
     image: elasticsearch:5.5.2
     ports:
