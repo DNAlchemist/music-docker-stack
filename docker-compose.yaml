@@ -34,7 +34,7 @@ services:
       - elasticsearch
   logstash:
     image: logstash:5.5.2
-    command: -e 'input { tcp { port => 5555 } } output { elasticsearch { hosts => ["elasticsearch:9200"] } }'
+    command: -e 'input { tcp { port => 5555 } } output { elasticsearch { hosts => ["elasticsearch:9200"] } } filter { json { source => message } mutate { remove_field => ["level_value"] } }'
     ports:
       - "5555:5555"
     depends_on:
